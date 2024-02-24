@@ -7,6 +7,9 @@ const { error } = require('console');
 // express access to json type
 app.use(express.json());
 
+// static files middleware
+app.use(express.static('public'));
+
 // routes
 // get request
 // front page
