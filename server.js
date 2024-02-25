@@ -90,6 +90,7 @@ app.delete('/addresses/:id', async(req, res)=> {
 });
 
 // connecting module to mongoDB
+// (name:password) = (admin:cs5200Team5)
 mongoose.connect('mongodb+srv://admin:cs5200Team5@cs5200team5api.dnzdxjz.mongodb.net/cs5200Team5?retryWrites=true&w=majority&appName=cs5200Team5API')
 .then(()=> {
 
