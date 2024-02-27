@@ -2,9 +2,14 @@ const mongoose = require('mongoose');
 
 const addressSchema = mongoose.Schema(
     {
-        name: {
+        lastName: {
             type: String, 
-            required: [true, "Please enter a resident name"],
+            required: [true, "Please enter a last name"],
+        },
+
+        firstName: {
+            type: String, 
+            required: [true, "Please enter a first name"],
         },
 
         street: {
