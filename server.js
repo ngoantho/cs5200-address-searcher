@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const Address = require('./models/addressModel') // address model
+const customer = require('./models/customerModel') // cusmtoerModel
 const mongoose =  require('mongoose');
 const { error } = require('console');
 
@@ -45,6 +46,9 @@ app.get('/addresses/:id', async(req, res) => {
         res.status(500).json({message: error.message})
     }
 });
+
+// find the address based on the name input. 
+
 
 // create a new address and save to database. 
 app.post('/address', async(req, res) => {
