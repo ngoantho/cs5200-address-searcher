@@ -34,6 +34,23 @@ app.get('/addresses', async(req, res) => {
     }
 });
 
+// find address by name
+// request name
+// response the customers matched with the name
+const finderByName = require('./finderByName');
+app.get('/addresses/name/:name', async (req, res) => {
+    try {
+        const name = req.params.name;
+        const customers = await finderByName(name);
+        if(customers.length === 0) {
+            return res.status(404).json({message: `No Address with the name ${name}`});
+        }
+        res.status(200).json(customers);
+    } catch (error) {
+    res.status(500).json({message: error.message});
+    }
+});
+
 // based on id find the address
 // we can update this to find target
 app.get('/addresses/:id', async(req, res) => {
