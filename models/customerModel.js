@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const addressSchema = mongoose.Schema(
+const cumstomerSchema = mongoose.Schema(
     {
         lastName: {
             type: String, 
@@ -56,7 +56,7 @@ const addressSchema = mongoose.Schema(
     }
 );
 
-const customer = mongoose.model('cumstomer', addressSchema, 'customerAddress');
+const customer = mongoose.model('cumstomer', cumstomerSchema, 'customerAddress');
 
 module.exports = customer;
 
