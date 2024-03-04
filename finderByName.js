@@ -2,8 +2,8 @@ const Customer = require('./models/customerModel'); // adjust the path
 
 async function finderByName(name) {
     try {
-        const address = await Customer.findOne({name: name });
-        return address;
+        const customers = await Customer.find({name: name });
+        return customers;
     } catch (error) {
         console.error(error);
         throw error;
