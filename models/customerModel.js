@@ -56,7 +56,7 @@ const addressSchema = mongoose.Schema(
     }
 );
 
-const address = mongoose.model('address', addressSchema);
+const customer = mongoose.model('cumstomer', addressSchema, 'customerAddress');
 
-module.exports = address;
+module.exports = customer;
 
