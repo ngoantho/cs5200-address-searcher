@@ -1,7 +1,7 @@
 // not exact matched
 // partly matched
 // return name and full address
-const Customer = require('./models/customerModel'); // adjust the path
+const Customer = require('../models/customerModel'); // adjust the path
 
 async function finderByCity(city) {
     try {

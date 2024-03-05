@@ -45,7 +45,7 @@ app.get('/addresses', async(req, res) => {
 // find address by name
 // request name
 // response the customers matched with the name
-const finderByName = require('./finderByName');
+const finderByName = require('./utils/finderByName');
 app.get('/addresses/name/:name', async (req, res) => {
     try {
         const name = req.params.name;
