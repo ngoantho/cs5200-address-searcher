@@ -1,9 +1,28 @@
 body {
     font-family: Arial, sans-serif;
+    background-color:gainsboro;
+}
+
+h1{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#loadAddresses{
+    height: 40px;
+    width: 150px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size:larger;
+    margin-top: 12px;
 }
 
 .addresses {
     margin-top: 20px;
+    padding: 20px;
+    font-size: 18px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-color: black;
+    border: dotted;
+    line-height: 1.5;
 }
 
 .pagination {
@@ -11,5 +30,7 @@ body {
 }
 
 .pagination button {
-   margin-right: 5px;
+   margin-right: 15px;
+   height: 50px;
+   width: 100px;
 }
