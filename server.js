@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
-const Address = require('./models/addressModel') // address model
-const customer = require('./models/customerModel') // cusmtoerModel
+const Address = require('./models/customerModel') // address model
 const mongoose =  require('mongoose');
 const path = require("path")
 const { error } = require('console');
