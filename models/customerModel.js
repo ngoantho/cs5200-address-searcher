@@ -37,7 +37,7 @@ const customerSchema = mongoose.Schema(
         },
         
         zip: {
-            type: string,
+            type: String,
             required: [true, "Please enter a zip code(postal code)"],
         },
         

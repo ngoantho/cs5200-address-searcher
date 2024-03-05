@@ -3,12 +3,21 @@ const app = express();
 const Address = require('./models/addressModel') // address model
 const customer = require('./models/customerModel') // cusmtoerModel
 const mongoose =  require('mongoose');
+const path = require("path")
 const { error } = require('console');
+const livereload = require("livereload")
+const connectLiveReload = require("connect-livereload")
+
+let liveReloadServer = livereload.createServer()
+liveReloadServer.watch(path.join(__dirname, "public"))
 
 // express access to json type
 app.use(express.json());
 
-// static files middleware
+// bridge livereload to express
+app.use(connectLiveReload())
+
+// browser is not refreshed on changes to public, using livereload
 app.use(express.static('public'));
 
 // routes
