@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.addresses {
+    margin-top: 20px;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination button {
+   margin-right: 5px;
+}
