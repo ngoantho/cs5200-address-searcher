@@ -6,7 +6,7 @@
     <title>Client for cs5200Team5 API</title>
     <link rel="stylesheet" href="app.css">
 </head>
-<body>
+<body onload="setupCountriesList()">
     <form id="mode-form">
         <input type="radio" value="multi-country" name="mode" onchange="handleModeChange(this)">
         <label for="mode">Multi-Country Search</label>
@@ -39,6 +39,7 @@
         <button type="submit" onclick="parseMultiCountryForm()">Submit</button>
     </form>
     <form id="single-country-form" class="country-form" data-selected="false">
+
     </form>
     <!-- <div class="addresses" id="addresses"></div> -->
     <!-- <div class="pagination" id="pagination"></div> -->

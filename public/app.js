@@ -1,4 +1,17 @@
-let loadedCountriesList = false
+async function setupCountriesList() {
+    let req = await fetch("http://localhost:3000/validation/countries")
+    let [data] = await req.json()
+    let { id, ...countries } = data
+
+    for (country in countries) {
+        if (country == "_id") continue
+
+        let option = document.createElement("option")
+        option.text = country
+        option.value = country
+        document.getElementById("selected-countries-select").appendChild(option)
+    }
+}
 
 function handleModeChange(e) {
     let mode = e.value, current = null, previous = null
@@ -6,7 +19,6 @@ function handleModeChange(e) {
         case "multi-country": {
             current = document.getElementById("multi-country-form")
             previous = document.getElementById("single-country-form")
-            setupMultiCountryForm()
             break
         }
         case "single-country": {
@@ -17,24 +29,6 @@ function handleModeChange(e) {
     }
     current.setAttribute("data-selected", true)
     previous.setAttribute("data-selected", false)
-}
-
-async function setupMultiCountryForm() {
-    if (!loadedCountriesList) {
-        let req = await fetch("http://localhost:3000/validation/countries")
-        let [data] = await req.json()
-        let { id, ...countries } = data
-
-        for (country in countries) {
-            if (country == "_id") continue
-
-            let option = document.createElement("option")
-            option.text = country
-            option.value = country
-            document.getElementById("selected-countries-select").appendChild(option)
-        }
-        loadedCountriesList = true
-    }
 }
 
 async function parseMultiCountryForm() {
