@@ -21,13 +21,16 @@ async function setupMultiCountryForm() {
     let req = await fetch("http://localhost:3000/validation/countries")
     let [data] = await req.json()
     let {id, ...countries} = data
+
+    let countriesSelect = document.getElementById("selected-countries-select")
+    countriesSelect.innerHTML = ""
     for (country in countries) {
         if (country == "_id") continue
 
         let option = document.createElement("option")
         option.text = country
         option.value = country
-        document.getElementById("selected-countries-select").appendChild(option)
+        countriesSelect.appendChild(option)
     }
 }
 
