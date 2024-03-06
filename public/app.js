@@ -32,31 +32,42 @@ function handleModeChange(e) {
 }
 
 async function parseMultiCountryForm() {
-    let form = document.getElementById("multi-country-form")
-    let formData = new FormData(form)
-    let entries = Object.fromEntries(formData)
-    console.debug("form data", entries)
-    
-    let countries = [] // extract from list elements and remove button
-    let selectedCountryList = document.getElementById("selected-countries-list")
+    let form = document.getElementById("multi-country-form");
+    let formData = new FormData(form);
+    let entries = Object.fromEntries(formData);
+    console.debug("form data", entries);
+
+    let countries = []; // Extract from list elements and remove button
+    let selectedCountryList = document.getElementById("selected-countries-list");
     for (let li of selectedCountryList.children) {
-        countries.push(li.innerHTML.replace("<button>-</button>", ''))
+        countries.push(li.innerHTML.replace("<button>-</button>", ''));
     }
 
-    countries.forEach(async (country) => {
+    // Array to store all the promises returned by fetch requests
+    let promises = countries.map(async (country) => {
         let req = await fetch("http://localhost:3000/address", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({...entries, country})
-        })
+            body: JSON.stringify({ ...entries, country })
+        });
 
-        // array
-        let data = await req.json()
-        console.log(data)
-    })
+        return req.json(); // Return the promise for each fetch request
+    });
+
+    // Wait for all promises to resolve using Promise.all
+    Promise.all(promises)
+        .then((dataArray) => {
+            // Concatenate all data arrays into a single array
+            let data = dataArray.reduce((acc, curr) => acc.concat(curr), []);
+            console.log(data);
+            loadAddresses(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 function addCountry() {
@@ -87,48 +98,53 @@ document.querySelectorAll(".country-form").forEach((countryForm) => {
     countryForm.addEventListener("submit", (e) => e.preventDefault())
 })
 
-function loadAddresses() {
-    fetch('http://localhost:3000/addresses')
-        .then(response => response.json())
-        .then(data => {
-            const addressesContainer = document.getElementById('addresses');
-            addressesContainer.innerHTML = ''; // Clear previous results
+/*document.getElementById("multi-country-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    console.log("Form submitted!"); // Log a message to the console when the form is submitted
 
-            const pageSize = 25;
-            const totalPages = Math.ceil(data.length / pageSize);
+    // Call parseMultiCountryForm when the form is submitted
+    parseMultiCountryForm();
+});
+*/
 
-            let currentPage = 1;
-            renderPage(currentPage);
+function loadAddresses(data) {
+    const addressesContainer = document.getElementById('addresses');
+    addressesContainer.innerHTML = ''; // Clear previous results
 
-            function renderPage(page) {
-                addressesContainer.innerHTML = ''; // Clear previous results
-                const startIndex = (page - 1) * pageSize;
-                const endIndex = Math.min(startIndex + pageSize, data.length);
+    const pageSize = 25;
+    const totalPages = Math.ceil(data.length / pageSize);
 
-                for (let i = startIndex; i < endIndex; i++) {
-                    const address = data[i];
-                    const div = document.createElement('div');
-                    div.textContent = `ID: ${address._id}, Address: ${address.street}, ${address.city}, ${address.state} ${address.zip}`;
-                    addressesContainer.appendChild(div);
-                }
+    let currentPage = 1;
+    renderPage(currentPage);
 
-                renderPaginationControls();
-            }
+    function renderPage(page) {
+        addressesContainer.innerHTML = ''; // Clear previous results
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, data.length);
 
-            function renderPaginationControls() {
-                const paginationContainer = document.getElementById('pagination');
-                paginationContainer.innerHTML = ''; // Clear previous pagination controls
+        for (let i = startIndex; i < endIndex; i++) {
+            const address = data[i];
+            const div = document.createElement('div');
+            div.textContent = `ID: ${address._id}, Address: ${address.street}, ${address.city}, ${address.state} ${address.zip}`;
+            addressesContainer.appendChild(div);
+        }
 
-                for (let i = 1; i <= totalPages; i++) {
-                    const button = document.createElement('button');
-                    button.textContent = i;
-                    button.addEventListener('click', () => {
-                        currentPage = i;
-                        renderPage(currentPage);
-                    });
-                    paginationContainer.appendChild(button);
-                }
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        renderPaginationControls();
+    }
+
+    function renderPaginationControls() {
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = ''; // Clear previous pagination controls
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.addEventListener('click', () => {
+                currentPage = i;
+                renderPage(currentPage);
+            });
+            paginationContainer.appendChild(button);
+        }
+    }
 }
+
