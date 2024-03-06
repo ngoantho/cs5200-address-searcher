@@ -1,3 +1,5 @@
+let loadedCountriesList = false
+
 function handleModeChange(e) {
     let mode = e.value, current = null, previous = null
     switch (mode) {
@@ -18,19 +20,20 @@ function handleModeChange(e) {
 }
 
 async function setupMultiCountryForm() {
-    let req = await fetch("http://localhost:3000/validation/countries")
-    let [data] = await req.json()
-    let {id, ...countries} = data
+    if (!loadedCountriesList) {
+        let req = await fetch("http://localhost:3000/validation/countries")
+        let [data] = await req.json()
+        let { id, ...countries } = data
 
-    let countriesSelect = document.getElementById("selected-countries-select")
-    countriesSelect.innerHTML = ""
-    for (country in countries) {
-        if (country == "_id") continue
+        for (country in countries) {
+            if (country == "_id") continue
 
-        let option = document.createElement("option")
-        option.text = country
-        option.value = country
-        countriesSelect.appendChild(option)
+            let option = document.createElement("option")
+            option.text = country
+            option.value = country
+            document.getElementById("selected-countries-select").appendChild(option)
+        }
+        loadedCountriesList = true
     }
 }
 
