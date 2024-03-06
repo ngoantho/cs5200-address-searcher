@@ -1,9 +1,82 @@
 body {
     font-family: Arial, sans-serif;
+    background-color:lavender;
+}
+
+h1{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.country-form {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.country-form input[type="text"],
+.country-form select {
+    width: 15%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.country-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.country-form button {
+    padding: 10px 20px;
+    margin-top: 10px;
+}
+
+.country-form button[type="submit"] {
+    background-color: mediumpurple;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.country-form button[type="submit"]:hover {
+    background-color: #45a049;
 }
 
 .country-form[data-selected=false] {
-    display: none
+    display: none;
+}
+
+.first-line {
+    display: flex;
+    justify-content:start;
+}
+
+#selected-countries-select{
+    margin-top: 20px;
+}
+
+#selected-countries-add{
+    margin-left: 10px;
+    background-color: lawngreen;
+    cursor: pointer;
+}
+
+#selected-countries-add:hover {
+    background-color: mediumspringgreen;
+}
+
+
+.second-line > div {
+    width: calc(20% - 5px); /* Set width for each input, accounting for margin */
+    margin-right: 20px; /* Adjust the margin between elements */
+}
+
+.second-line label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.second-line input[type="text"] {
+    width: 100%; /* Fill the entire width of the div */
+    padding: 8px;
 }
 
 #selected-countries-list>li button {
