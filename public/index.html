@@ -7,13 +7,41 @@
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
-    <hr/>
-    <h1>Addresses</h1>
-    <hr />
-    <button id="loadAddresses">Load Addresses</button>
-    <div class="addresses" id="addresses"></div>
-    <div class="pagination" id="pagination"></div>
-
+    <form id="mode-form">
+        <input type="radio" value="multi-country" name="mode" onchange="handleModeChange(this)">
+        <label for="mode">Multi-Country Search</label>
+        <input type="radio" value="single-country" name="mode" onchange="handleModeChange(this)">
+        <label for="mode">Single Country Search</label>
+    </form>
+    <form id="multi-country-form" class="country-form" data-selected="false">
+        <ul id="selected-countries-list"></ul>
+        <select id="selected-countries-select">
+            <option value="" selected disabled hidden>Select a country</option>
+        </select>
+        <button id="selected-countries-add" onclick="addCountry()">+</button>
+        <hr>
+        <div>
+            <label for="street">Street</label>
+            <input type="text" name="street" placeholder="street">
+            <br>
+            <label for="city">City</label>
+            <input type="text" name="city" placeholder="city">
+            <br>
+            <label for="county">County</label>
+            <input type="text" name="county" placeholder="county">
+            <br>
+            <label for="state">State</label>
+            <input type="text" name="state" placeholder="state">
+            <br>
+            <label for="zip">Zip Code</label>
+            <input type="text" name="zip" placeholder="zip">
+        </div>
+        <button type="submit" onclick="parseMultiCountryForm()">Submit</button>
+    </form>
+    <form id="single-country-form" class="country-form" data-selected="false">
+    </form>
+    <!-- <div class="addresses" id="addresses"></div> -->
+    <!-- <div class="pagination" id="pagination"></div> -->
     <script src="app.js"></script>
 </body>
 </html>

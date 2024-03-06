@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const Address = require('./models/customerModel') // address model
+const Validation = require('./models/validationModel')
 const mongoose =  require('mongoose');
 const path = require("path")
 const { error } = require('console');
@@ -42,11 +43,21 @@ app.get('/addresses', async(req, res) => {
     }
 });
 
+// return list of countries
+app.get("/validation/countries", async (req, res) => {
+    try {
+        const countries = await Validation.find({})
+        res.status(200).json(countries)
+    } catch {
+        res.status(500).json({message: error.message})
+    }
+})
+
 // find address by name
 // request name
 // response the customers matched with the name
 const finderByName = require('./utils/finderByName');
-app.get('/addresses/name/:name', async (req, res) => {
+app.get('/address/name/:name', async (req, res) => {
     try {
         const name = req.params.name;
         const customers = await finderByName(name);
@@ -61,7 +72,7 @@ app.get('/addresses/name/:name', async (req, res) => {
 
 // based on id find the address
 // we can update this to find target
-app.get('/addresses/:id', async(req, res) => {
+app.get('/address/:id', async(req, res) => {
     try {
         // find by id
         const {id} = req.params;
@@ -72,11 +83,19 @@ app.get('/addresses/:id', async(req, res) => {
     }
 });
 
-// find the address based on the name input. 
-
+// find addresses that match query in request body
+app.post("/address", async(req, res) => {
+    let nonFalseyBody = Object.fromEntries(Object.entries(req.body).filter(([k, v]) => v))
+    try {
+        let addresses = await Address.find(nonFalseyBody)
+        res.status(200).json(addresses)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
 
 // create a new address and save to database. 
-app.post('/address', async(req, res) => {
+app.post('/address/new', async(req, res) => {
     try{
         const address = await Address.create(req.body);
         res.status(200).json(address);
@@ -87,7 +106,7 @@ app.post('/address', async(req, res) => {
 });
 
 // update a address
-app.put('/addresses/:id', async(req, res) => {
+app.put('/address/:id', async(req, res) => {
     try{
         const {id} = req.params;
         const address =await Address.findByIdAndUpdate(id, req.body);

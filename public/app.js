@@ -1,4 +1,91 @@
-document.getElementById('loadAddresses').addEventListener('click', loadAddresses);
+function handleModeChange(e) {
+    let mode = e.value, current = null, previous = null
+    switch (mode) {
+        case "multi-country": {
+            current = document.getElementById("multi-country-form")
+            previous = document.getElementById("single-country-form")
+            setupMultiCountryForm()
+            break
+        }
+        case "single-country": {
+            current = document.getElementById("single-country-form")
+            previous = document.getElementById("multi-country-form")
+            break
+        }
+    }
+    current.setAttribute("data-selected", true)
+    previous.setAttribute("data-selected", false)
+}
+
+async function setupMultiCountryForm() {
+    let req = await fetch("http://localhost:3000/validation/countries")
+    let [data] = await req.json()
+    let {id, ...countries} = data
+    for (country in countries) {
+        if (country == "_id") continue
+
+        let option = document.createElement("option")
+        option.text = country
+        option.value = country
+        document.getElementById("selected-countries-select").appendChild(option)
+    }
+}
+
+async function parseMultiCountryForm() {
+    let form = document.getElementById("multi-country-form")
+    let formData = new FormData(form)
+    let entries = Object.fromEntries(formData)
+    console.debug("form data", entries)
+    
+    let countries = [] // extract from list elements and remove button
+    let selectedCountryList = document.getElementById("selected-countries-list")
+    for (let li of selectedCountryList.children) {
+        countries.push(li.innerHTML.replace("<button>-</button>", ''))
+    }
+
+    countries.forEach(async (country) => {
+        let req = await fetch("http://localhost:3000/address", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({...entries, country})
+        })
+
+        // array
+        let data = await req.json()
+        console.log(data)
+    })
+}
+
+function addCountry() {
+    let selectedCountry = document.getElementById("selected-countries-select")
+    if (selectedCountry.value) {
+        let option = selectedCountry.querySelector(`#selected-countries-select option[value="${selectedCountry.value}"]`)
+
+        let countriesList = document.getElementById("selected-countries-list")
+        let li = document.createElement("li")
+        li.innerText = selectedCountry.value
+
+        let cancelBtn = document.createElement("button")
+        cancelBtn.innerText = "-"
+        cancelBtn.onclick = () => {
+            countriesList.removeChild(li)
+            selectedCountry.appendChild(option)
+            selectedCountry.value = ""
+        }
+        li.append(cancelBtn)
+
+        countriesList.append(li)
+        selectedCountry.removeChild(option)
+        selectedCountry.value = ""
+    }
+}
+
+document.querySelectorAll(".country-form").forEach((countryForm) => {
+    countryForm.addEventListener("submit", (e) => e.preventDefault())
+})
 
 function loadAddresses() {
     fetch('http://localhost:3000/addresses')
