@@ -15,15 +15,18 @@ async function setupCountriesList() {
 
 function handleModeChange(e) {
     let mode = e.value, current = null, previous = null
+    const addressesContainer = document.getElementById('addresses');
     switch (mode) {
         case "multi-country": {
             current = document.getElementById("multi-country-form")
-            previous = document.getElementById("single-country-form")
+            previous = document.getElementById("single-country-form") 
+            addressesContainer.innerHTML = ''; // Clear previous results
             break
         }
         case "single-country": {
             current = document.getElementById("single-country-form")
             previous = document.getElementById("multi-country-form")
+            addressesContainer.innerHTML = ''
             break
         }
     }
