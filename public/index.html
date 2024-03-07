@@ -8,7 +8,7 @@
 </head>
 <body onload="setupCountriesList()">
     <hr />
-    <h1>Image Processor - Team 5</h1>
+    <h1>Address Search - Team 5</h1>
     <hr />
     <form id="mode-form">
         <input type="radio" value="multi-country" id="multi-country" name="mode" onchange="handleModeChange(this)">
@@ -49,9 +49,17 @@
         </div>
         <button type="submit" onclick="parseMultiCountryForm()">Submit</button>
     </form>
-    <form id="single-country-form" class="country-form" data-selected="false"></form>
+    <form id="single-country-form" class="country-form" data-selected="false">
+        <select id="single-select-country" onchange="handleSingleSelectChange(this)">
+            <option value="" selected disabled hidden>Select a country</option>
+        </select>
+        <select id="single-select-city" hidden>
+            <option value="" selected disabled hidden>Select a city</option>
+        </select>
+    </form>
     <div class="addresses" id="addresses"></div>
     <div class="pagination" id="pagination"></div>
+    <script src="scratchpad.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
