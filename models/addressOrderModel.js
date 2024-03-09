@@ -1,12 +1,12 @@
 const mongoose = require("mongoose")
 
-const validationSchema = mongoose.Schema(
+const addressOrderSchema = mongoose.Schema(
   {
     country: {
       type: String,
       required: true
     },
-    locations: {
+    order: {
       type: Array,
       required: true
     }
@@ -15,6 +15,3 @@ const validationSchema = mongoose.Schema(
     timestamps: true
   }
 )
-
-const validation = mongoose.model("validation", validationSchema, "validations")
-module.exports = validation

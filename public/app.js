@@ -1,11 +1,8 @@
+window.validation = {}
 async function setupCountriesList() {
     let req = await fetch("http://localhost:3000/validation/countries")
-    let [data] = await req.json()
-    let { id, ...countries } = data
-
-    for (country in countries) {
-        if (country == "_id") continue
-
+    let countries = await req.json() // array
+    for (country of countries) {
         let option = document.createElement("option")
         option.text = country
         option.value = country
@@ -13,28 +10,7 @@ async function setupCountriesList() {
     }
 }
 
-function handleModeChange(e) {
-    let mode = e.value, current = null, previous = null
-    const addressesContainer = document.getElementById('addresses');
-    switch (mode) {
-        case "multi-country": {
-            current = document.getElementById("multi-country-form")
-            previous = document.getElementById("single-country-form") 
-            addressesContainer.innerHTML = ''; // Clear previous results
-            break
-        }
-        case "single-country": {
-            current = document.getElementById("single-country-form")
-            previous = document.getElementById("multi-country-form")
-            addressesContainer.innerHTML = ''
-            break
-        }
-    }
-    current.setAttribute("data-selected", true)
-    previous.setAttribute("data-selected", false)
-}
-
-async function parseMultiCountryForm() {
+async function parseForm() {
     let form = document.getElementById("multi-country-form");
     let formData = new FormData(form);
     let entries = Object.fromEntries(formData);
@@ -57,7 +33,7 @@ async function parseMultiCountryForm() {
             body: JSON.stringify({ ...entries, country })
         });
 
-        return req.json(); // Return the promise for each fetch request
+        return await req.json(); // Return the promise for each fetch request
     });
 
     // Wait for all promises to resolve using Promise.all
@@ -73,42 +49,41 @@ async function parseMultiCountryForm() {
         });
 }
 
+function removeCountry(countriesList, li, selectedCountry, option) {
+    countriesList.removeChild(li)
+    selectedCountry.appendChild(option)
+    selectedCountry.value = ""
+    console.debug("removeCountry", option.value)
+}
+
 function addCountry() {
     let selectedCountry = document.getElementById("selected-countries-select")
-    if (selectedCountry.value) {
-        let option = selectedCountry.querySelector(`#selected-countries-select option[value="${selectedCountry.value}"]`)
+    let option = selectedCountry.querySelector(`#selected-countries-select option[value="${selectedCountry.value}"]`)
 
-        let countriesList = document.getElementById("selected-countries-list")
-        let li = document.createElement("li")
-        li.innerText = selectedCountry.value
+    let countriesList = document.getElementById("selected-countries-list")
+    let li = document.createElement("li")
+    li.innerText = selectedCountry.value
 
-        let cancelBtn = document.createElement("button")
-        cancelBtn.innerText = "-"
-        cancelBtn.onclick = () => {
-            countriesList.removeChild(li)
-            selectedCountry.appendChild(option)
-            selectedCountry.value = ""
-        }
-        li.append(cancelBtn)
+    let cancelBtn = document.createElement("button")
+    cancelBtn.innerText = "-"
+    cancelBtn.onclick = () => removeCountry(countriesList, li, selectedCountry, option)
+    li.append(cancelBtn)
 
-        countriesList.append(li)
-        selectedCountry.removeChild(option)
-        selectedCountry.value = ""
-    }
+    countriesList.append(li)
+    selectedCountry.removeChild(option)
+    selectedCountry.value = ""
+
+    setupValidation(li.innerHTML.replace("<button>-</button>", ''))
+}
+
+function setupValidation(country) {
+    console.debug("setupValidation", country)
+    
 }
 
 document.querySelectorAll(".country-form").forEach((countryForm) => {
     countryForm.addEventListener("submit", (e) => e.preventDefault())
 })
-
-/*document.getElementById("multi-country-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission
-    console.log("Form submitted!"); // Log a message to the console when the form is submitted
-
-    // Call parseMultiCountryForm when the form is submitted
-    parseMultiCountryForm();
-});
-*/
 
 function loadAddresses(data) {
     const addressesContainer = document.getElementById('addresses');
