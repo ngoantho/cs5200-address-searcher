@@ -138,8 +138,14 @@ async function setupValidation(country) {
 
 function handleChange(part, value, country) {
     if (part == "state") {
-        document.getElementById(`${country}_county`)
-        .querySelectorAll("option[state]").forEach((option) => {
+        if (document.getElementById(`${country}_county`)) {
+            document.getElementById(`${country}_county`).querySelectorAll("option[state]").forEach((option) => {
+                if (option.getAttribute("state") == value) option.hidden = false
+                else option.hidden = true
+            })
+        }
+        // list cities at state level
+        document.getElementById(`${country}_city`).querySelectorAll("option[state]").forEach((option) => {
             if (option.getAttribute("state") == value) option.hidden = false
             else option.hidden = true
         })
