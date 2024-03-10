@@ -83,6 +83,7 @@ app.get('/address/:id', async(req, res) => {
     }
 });
 
+/*
 // find addresses that match query in request body
 app.post("/address", async(req, res) => {
     let nonFalseyBody = Object.fromEntries(Object.entries(req.body).filter(([k, v]) => v))
@@ -93,6 +94,30 @@ app.post("/address", async(req, res) => {
         res.status(500).json({message: error.message})
     }
 })
+*/
+
+app.post("/address", async (req, res) => {
+    try {
+        const { street, city, county, state, zip, country } = req.body;
+
+        const filter = {};
+        // 'i' flag for case-insensitive search
+        if (street) filter.street = new RegExp(street, 'i'); 
+        if (city) filter.city = new RegExp(city, 'i');
+        if (county) filter.county = new RegExp(county, 'i');
+        if (state) filter.state = new RegExp(state, 'i');
+        if (zip) filter.zip = new RegExp(zip, 'i');
+        if (country) filter.country = new RegExp(country, 'i');
+
+        // Find addresses matching filter criteria
+        const addresses = await Address.find(filter);
+
+        res.status(200).json(addresses);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 // create a new address and save to database. 
 app.post('/address/new', async(req, res) => {
