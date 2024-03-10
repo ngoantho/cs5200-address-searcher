@@ -109,7 +109,7 @@ app.post("/address", async(req, res) => {
 
 app.post("/address", async (req, res) => {
     try {
-        const { street, city, county, state, zip, country } = req.body;
+        const { firstName, lastName, street, city, county, state, zip, country } = req.body;
 
         const filter = {};
         // 'i' flag for case-insensitive search
@@ -119,6 +119,8 @@ app.post("/address", async (req, res) => {
         if (state) filter.state = new RegExp(state, 'i');
         if (zip) filter.zip = new RegExp(zip, 'i');
         if (country) filter.country = new RegExp(country, 'i');
+        if (firstName) filter.firstName = firstName
+        if (lastName) filter.lastName = lastName
 
         // Find addresses matching filter criteria
         const addresses = await Address.find(filter);

@@ -30,6 +30,10 @@ async function parseForm() {
                         .from(document.querySelectorAll("input[type=text][part=street]"))
                         .filter((input) => input.getAttribute("country") == country)
                         .map((input) => input.value)
+        let [firstName, lastName] = Array
+                        .from(document.querySelectorAll("input[type=text][part=name]"))
+                        .filter((input) => input.getAttribute("country") == country)
+                        .map((input) => input.value)
         let entries = nodes.reduce((obj, item) => {
             return {...obj, [item.getAttribute("part")]: item.value}
         }, {})
@@ -40,7 +44,7 @@ async function parseForm() {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ ...entries, street, country })
+            body: JSON.stringify({ ...entries, firstName, lastName, street, country })
         })
 
         return req.json() // Return the promise for each fetch request
@@ -113,6 +117,7 @@ async function setupValidation(country) {
     })
     let data = await req.json()
 
+    createName(country)
     createStreet(country)
 
     createInput(country, data, "city")
@@ -196,6 +201,31 @@ function createStreet(country) {
     document.getElementById("fieldset_street", div).appendChild(div)
 }
 
+function createName(country) {
+    let div = document.createElement("div")
+    div.setAttribute("country", country)
+
+    let label = document.createElement("label")
+    label.textContent = country
+    div.appendChild(label)
+
+    let firstName = document.createElement("input")
+    firstName.type = "text"
+    firstName.placeholder = "First Name"
+    firstName.setAttribute("part", "name")
+    firstName.setAttribute("country", country)
+    div.appendChild(firstName)
+
+    let lastName = document.createElement("input")
+    lastName.type = "text"
+    lastName.placeholder = "Last Name"
+    lastName.setAttribute("part", "name")
+    lastName.setAttribute("country", country)
+    div.appendChild(lastName)
+
+    document.getElementById("fieldset_name", div).appendChild(div)
+}
+
 function createInput(country, data, part) {
     let div = document.createElement("div")
     div.setAttribute("country", country)
@@ -271,9 +301,9 @@ function loadAddresses(data) {
         const endIndex = Math.min(startIndex + pageSize, data.length);
 
         for (let i = startIndex; i < endIndex; i++) {
-            const address = data[i];
+            const {_id, firstName, lastName, street, city, county, prefecture, province, state, zip} = data[i];
             const div = document.createElement('div');
-            div.textContent = `ID: ${address._id}, Address: ${address.street}, ${address.city}, ${address.state} ${address.zip}`;
+            div.textContent = `ID: ${_id}, Name: ${firstName} ${lastName}, Address: ${street}, ${city}, ${county??""} ${prefecture??""} ${province??""} ${state??""} ${zip}`;
             addressesContainer.appendChild(div);
         }
 

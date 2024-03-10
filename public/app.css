@@ -76,7 +76,7 @@ h1{
 }
 
 .second-line input[type="text"] {
-    width: 100%; /* Fill the entire width of the div */
+    /* width: 100%; */
     padding: 8px;
 }
 
