@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const Address = require('./models/customerModel') // address model
 const Validation = require('./models/validationModel')
+const AddressOrder = require('./models/addressOrder')
 const mongoose =  require('mongoose');
 const path = require("path")
 const { error } = require('console');
@@ -46,10 +47,20 @@ app.get('/addresses', async(req, res) => {
 // return list of countries
 app.get("/validation/countries", async (req, res) => {
     try {
-        const countries = await Validation.find({})
+        const countries = await AddressOrder.find().distinct("country")
         res.status(200).json(countries)
     } catch {
         res.status(500).json({message: error.message})
+    }
+})
+
+app.post("/validation/country", async (req, res) => {
+    try {
+        let {country} = req.body
+        let data = await Validation.find({ country })
+        res.status(200).json(data)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
     }
 })
 
@@ -118,6 +129,17 @@ app.post("/address", async (req, res) => {
     }
 });
 
+
+app.post("/address/order", async (req, res) => {
+    try {
+        let {country} = req.body
+        let [data] = await AddressOrder.find({country})
+        let {_, order} = data
+        res.status(200).json(order)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
 // create a new address and save to database. 
 app.post('/address/new', async(req, res) => {

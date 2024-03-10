@@ -10,13 +10,13 @@
     <hr />
     <h1>Address Search - Team 5</h1>
     <hr />
-    <form id="mode-form">
+    <!-- <form id="mode-form">
         <input type="radio" value="multi-country" id="multi-country" name="mode" onchange="handleModeChange(this)">
         <label for="multi-country">Multi-Country Search</label>
         <input type="radio" value="single-country" id="single-country" name="mode" onchange="handleModeChange(this)">
         <label for="single-country">Single Country Search</label>
-    </form>
-    <form id="multi-country-form" class="country-form" data-selected="false">
+    </form> -->
+    <form id="multi-country-form" class="country-form">
         <div class="first-line">
             <select id="selected-countries-select">
                 <option value="" selected disabled hidden>Select a country</option>
@@ -28,38 +28,31 @@
         <div class="second-line">
             <div>
                 <label for="street">Street</label>
-                <input type="text" id="street" name="street" placeholder="Street">
+                <input type="text" id="street" name="street">
             </div>
-            <div>
-                <label for="city">City</label>
-                <input type="text" id="city" name="city" placeholder="City">
-            </div>
-            <div>
-                <label for="county">County</label>
-                <input type="text" id="county" name="county" placeholder="County">
-            </div>
-            <div>
-                <label for="state">State</label>
-                <input type="text" id="state" name="state" placeholder="State">
-            </div>
-            <div>
-                <label for="zip">Zip Code</label>
-                <input type="text" id="zip" name="zip" placeholder="Zip Code">
-            </div>
+            <fieldset id="fieldset_city">
+                <legend>City</legend>
+            </fieldset>
+            <fieldset id="fieldset_county">
+                <legend>County</legend>
+            </fieldset>
+            <fieldset id="fieldset_prefecture">
+                <legend>Prefecture</legend>
+            </fieldset>
+            <fieldset id="fieldset_province">
+                <legend>Province</legend>
+            </fieldset>
+            <fieldset id="fieldset_state">
+                <legend>State</legend>
+            </fieldset>
+            <fieldset id="fieldset_zip">
+                <legend>Postal Code</legend>
+            </fieldset>
         </div>
-        <button type="submit" onclick="parseMultiCountryForm()">Submit</button>
-    </form>
-    <form id="single-country-form" class="country-form" data-selected="false">
-        <select id="single-select-country" onchange="handleSingleSelectChange(this)">
-            <option value="" selected disabled hidden>Select a country</option>
-        </select>
-        <select id="single-select-city" hidden>
-            <option value="" selected disabled hidden>Select a city</option>
-        </select>
+        <button type="submit" onclick="parseForm()">Submit</button>
     </form>
     <div class="addresses" id="addresses"></div>
     <div class="pagination" id="pagination"></div>
-    <script src="scratchpad.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
