@@ -76,9 +76,127 @@ function addCountry() {
     setupValidation(li.innerHTML.replace("<button>-</button>", ''))
 }
 
-function setupValidation(country) {
+async function setupValidation(country) {
     console.debug("setupValidation", country)
-    
+
+    let req = await fetch("http://localhost:3000/address/order", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ country })
+    })
+    let order = await req.json() // array
+
+    req = await fetch("http://localhost:3000/validation/country", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({country})
+    })
+    let data = await req.json()
+
+    createInput(country, data, "city")
+    createInput(country, data, "zip")
+    if (order.includes("county")) {
+        createInput(country, data, "county")
+    }
+    if (order.includes("prefecture")) {
+        createInput(country, data, "prefecture")
+    }
+    if (order.includes("province")) {
+        createInput(country, data, "province")
+    }
+    if (order.includes("state")) {
+        createInput(country, data, "state")
+    }
+}
+
+function handleChange(part, value) {
+    if (part == "state") {
+        document.getElementById("fieldset_county")
+        .querySelectorAll("option[state]").forEach((option) => {
+            if (option.getAttribute("state") == value) option.hidden = false
+            else option.hidden = true
+        })
+        window.state = value
+    } else if (part == "county") {
+        document.getElementById("fieldset_city")
+        .querySelectorAll(`option[county][state]`).forEach((option) => {
+            if (option.getAttribute("state") == window.state && option.getAttribute("county") == value) option.hidden = false
+            else option.hidden = true
+        })
+        window.county = value
+    } else if (part == "prefecture") {
+        document.getElementById("fieldset_city")
+            .querySelectorAll("option[prefecture]").forEach((option) => {
+                if (option.getAttribute("prefecture") == value) option.hidden = false
+                else option.hidden = true
+            })
+        window.prefecture = value
+    } else if (part == "province") {
+        document.getElementById("fieldset_city")
+            .querySelectorAll("option[province]").forEach((option) => {
+                if (option.getAttribute("province") == value) option.hidden = false
+                else option.hidden = true
+            })
+        window.province = value
+    }
+    document.getElementById("fieldset_zip")
+    .querySelectorAll("option[value]").forEach((option) => {
+        if ((option.getAttribute("county") == window.county && 
+            option.getAttribute("state") == window.state) || 
+            option.getAttribute("prefecture") == window.prefecture || 
+            option.getAttribute("province") == window.province) option.hidden = false
+        else option.hidden = true
+    })
+}
+
+function createInput(country, data, part) {
+    let label = document.createElement("label")
+    label.textContent = country
+    document.getElementById(`fieldset_${part}`).appendChild(label)
+
+    let select = document.createElement("select")
+    select.id = `${country}_${part}`
+    select.onchange = (e) => handleChange(part, e.target.value)
+
+    let count = {}
+    for (props of data) {
+        if (props[part] != undefined) {
+            // skip if already added
+            if (count[props[part]] != undefined) continue
+
+            let option = document.createElement("option")
+            option.value = props[part]
+            option.text = props[part]
+            if (part == "city" || part == "zip") {
+                option.setAttribute("county", props["county"])
+                option.setAttribute("prefecture", props["prefecture"])
+                option.setAttribute("province", props["province"])
+                option.setAttribute("state", props["state"])
+                option.hidden = true
+            } else if (part == "county") {
+                option.setAttribute("state", props["state"])
+                option.hidden = true
+            }
+            select.appendChild(option)
+
+            // prevent duplicates
+            count[props[part]] = true
+        }
+    }
+
+    let defaultOption = document.createElement("option")
+    defaultOption.value = ""
+    defaultOption.selected = true
+    defaultOption.hidden = true
+    select.appendChild(defaultOption)
+
+    document.getElementById(`fieldset_${part}`).appendChild(select)
 }
 
 document.querySelectorAll(".country-form").forEach((countryForm) => {

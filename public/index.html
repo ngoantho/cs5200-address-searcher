@@ -30,26 +30,24 @@
                 <label for="street">Street</label>
                 <input type="text" id="street" name="street">
             </div>
-            <div>
-                <label for="city">City</label>
-                <input list="cities" id="city" name="city">
-                <datalist id="cities"></datalist>
-            </div>
-            <div>
-                <label for="county">County</label>
-                <input list="counties" id="county" name="county">
-                <datalist id="counties"></datalist>
-            </div>
-            <div>
-                <label for="state">State</label>
-                <input list="states" id="state" name="state">
-                <datalist id="states"></datalist>
-            </div>
-            <div>
-                <label for="postal-code">Postal Code</label>
-                <input list="postal-codes" id="postal-code" name="postal-code">
-                <datalist id="postal-codes"></datalist>
-            </div>
+            <fieldset id="fieldset_city">
+                <legend>City</legend>
+            </fieldset>
+            <fieldset id="fieldset_county">
+                <legend>County</legend>
+            </fieldset>
+            <fieldset id="fieldset_prefecture">
+                <legend>Prefecture</legend>
+            </fieldset>
+            <fieldset id="fieldset_province">
+                <legend>Province</legend>
+            </fieldset>
+            <fieldset id="fieldset_state">
+                <legend>State</legend>
+            </fieldset>
+            <fieldset id="fieldset_zip">
+                <legend>Postal Code</legend>
+            </fieldset>
         </div>
         <button type="submit" onclick="parseForm()">Submit</button>
     </form>
