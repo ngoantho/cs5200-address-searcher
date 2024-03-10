@@ -54,6 +54,10 @@ function removeCountry(countriesList, li, selectedCountry, option) {
     selectedCountry.appendChild(option)
     selectedCountry.value = ""
     console.debug("removeCountry", option.value)
+
+    document.querySelectorAll("div[country]").forEach((div) => {
+        if (div.getAttribute("country") == option.value) div.remove()
+    })
 }
 
 function addCountry() {
@@ -115,54 +119,65 @@ async function setupValidation(country) {
     }
 }
 
-function handleChange(part, value) {
+function handleChange(part, value, country) {
     if (part == "state") {
-        document.getElementById("fieldset_county")
+        document.getElementById(`${country}_county`)
         .querySelectorAll("option[state]").forEach((option) => {
             if (option.getAttribute("state") == value) option.hidden = false
             else option.hidden = true
         })
         window.state = value
     } else if (part == "county") {
-        document.getElementById("fieldset_city")
+        document.getElementById(`${country}_city`)
         .querySelectorAll(`option[county][state]`).forEach((option) => {
             if (option.getAttribute("state") == window.state && option.getAttribute("county") == value) option.hidden = false
             else option.hidden = true
         })
         window.county = value
     } else if (part == "prefecture") {
-        document.getElementById("fieldset_city")
+        document.getElementById(`${country}_city`)
             .querySelectorAll("option[prefecture]").forEach((option) => {
                 if (option.getAttribute("prefecture") == value) option.hidden = false
                 else option.hidden = true
             })
         window.prefecture = value
     } else if (part == "province") {
-        document.getElementById("fieldset_city")
+        document.getElementById(`${country}_city`)
             .querySelectorAll("option[province]").forEach((option) => {
                 if (option.getAttribute("province") == value) option.hidden = false
                 else option.hidden = true
             })
         window.province = value
+    } else if (part == "city") {
+        document.getElementById(`${country}_zip`)
+            .querySelectorAll("option[city]").forEach((option) => {
+                if (option.getAttribute("city") == value) option.hidden = false
+                else option.hidden = true
+            })
+        window.city = value
     }
-    document.getElementById("fieldset_zip")
-    .querySelectorAll("option[value]").forEach((option) => {
-        if ((option.getAttribute("county") == window.county && 
-            option.getAttribute("state") == window.state) || 
-            option.getAttribute("prefecture") == window.prefecture || 
-            option.getAttribute("province") == window.province) option.hidden = false
-        else option.hidden = true
-    })
+    // document.getElementById(`${country}_zip`)
+    // .querySelectorAll("option[value]").forEach((option) => {
+    //     if ((option.getAttribute("county") == window.county && 
+    //         option.getAttribute("state") == window.state) || 
+    //         option.getAttribute("prefecture") == window.prefecture || 
+    //         option.getAttribute("province") == window.province ||
+    //         option.getAttribute("elevate_city") == "true") option.hidden = false
+    //     else option.hidden = true
+    // })
 }
 
 function createInput(country, data, part) {
+    let div = document.createElement("div")
+    div.setAttribute("country", country)
+
     let label = document.createElement("label")
     label.textContent = country
-    document.getElementById(`fieldset_${part}`).appendChild(label)
+    div.appendChild(label)
 
     let select = document.createElement("select")
     select.id = `${country}_${part}`
-    select.onchange = (e) => handleChange(part, e.target.value)
+    select.onchange = (e) => handleChange(part, e.target.value, country)
 
     let count = {}
     for (props of data) {
@@ -173,14 +188,19 @@ function createInput(country, data, part) {
             let option = document.createElement("option")
             option.value = props[part]
             option.text = props[part]
-            if (part == "city" || part == "zip") {
+            if (part == "city") {
                 option.setAttribute("county", props["county"])
                 option.setAttribute("prefecture", props["prefecture"])
                 option.setAttribute("province", props["province"])
                 option.setAttribute("state", props["state"])
-                option.hidden = true
+
+                if (props.elevate_city) option.hidden = false
+                else option.hidden = true
             } else if (part == "county") {
                 option.setAttribute("state", props["state"])
+                option.hidden = true
+            } else if (part == "zip") {
+                option.setAttribute("city", props["city"])
                 option.hidden = true
             }
             select.appendChild(option)
@@ -196,7 +216,8 @@ function createInput(country, data, part) {
     defaultOption.hidden = true
     select.appendChild(defaultOption)
 
-    document.getElementById(`fieldset_${part}`).appendChild(select)
+    div.appendChild(select)
+    document.getElementById(`fieldset_${part}`).appendChild(div)
 }
 
 document.querySelectorAll(".country-form").forEach((countryForm) => {
