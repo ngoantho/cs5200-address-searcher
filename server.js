@@ -115,8 +115,8 @@ app.post("/address", async (req, res) => {
         // 'i' flag for case-insensitive search
         if (street) filter.street = new RegExp(street, 'i'); 
         if (city) filter.city = new RegExp(city, 'i');
-        if (county) filter.county = new RegExp(county, 'i');
-        if (state) filter.state = new RegExp(state, 'i');
+        // if (county) filter.county = new RegExp(county, 'i');
+        // if (state) filter.state = new RegExp(state, 'i');
         if (zip) filter.zip = new RegExp(zip, 'i');
         if (country) filter.country = new RegExp(country, 'i');
         if (firstName) filter.firstName = firstName
