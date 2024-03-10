@@ -94,19 +94,6 @@ app.get('/address/:id', async(req, res) => {
     }
 });
 
-/*
-// find addresses that match query in request body
-app.post("/address", async(req, res) => {
-    let nonFalseyBody = Object.fromEntries(Object.entries(req.body).filter(([k, v]) => v))
-    try {
-        let addresses = await Address.find(nonFalseyBody)
-        res.status(200).json(addresses)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-})
-*/
-
 app.post("/address", async (req, res) => {
     try {
         const { firstName, lastName, street, city, county, state, zip, country } = req.body;
@@ -115,8 +102,6 @@ app.post("/address", async (req, res) => {
         // 'i' flag for case-insensitive search
         if (street) filter.street = new RegExp(street, 'i'); 
         if (city) filter.city = new RegExp(city, 'i');
-        // if (county) filter.county = new RegExp(county, 'i');
-        // if (state) filter.state = new RegExp(state, 'i');
         if (zip) filter.zip = new RegExp(zip, 'i');
         if (country) filter.country = new RegExp(country, 'i');
         if (firstName) filter.firstName = firstName
