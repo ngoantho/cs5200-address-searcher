@@ -1,0 +1,234 @@
+openapi: 3.0.0
+info:
+  title: Address Management API
+  version: 1.0.0
+  description: This API documentation outlines the endpoints used for address management in a web application.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /:
+    get:
+      summary: Get the default endpoint.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              example: Hello cs5200Team5 API
+
+  /blog:
+    get:
+      summary: Get a test page.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              example: Hello Classes, We are Team5
+
+  /addresses:
+    get:
+      summary: Get all addresses.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: [{ "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }, ...]
+
+  /validation/countries:
+    get:
+      summary: Get the list of countries for validation.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: ["Country1", "Country2", ...]
+
+  /validation/country:
+    post:
+      summary: Get validation data for a specific country.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+              required:
+                - country
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: [{ "city": "City1", "county": "County1", ... }]
+
+  /address/name/{name}:
+    get:
+      summary: Get addresses by name.
+      parameters:
+        - name: name
+          in: path
+          description: The name to search for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: [{ "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }, ...]
+        '404':
+          description: No addresses found for the given name
+          content:
+            application/json:
+              example: { "message": "No Address with the name John" }
+
+  /address/{id}:
+    get:
+      summary: Get an address by ID.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the address to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: { "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }
+        '404':
+          description: No address found for the given ID
+          content:
+            application/json:
+              example: { "message": "Cannot find any address with id 12345" }
+
+  /search:
+    post:
+      summary: Search for addresses based on criteria.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                street:
+                  type: string
+                city:
+                  type: string
+                county:
+                  type: string
+                state:
+                  type: string
+                zip:
+                  type: string
+                country:
+                  type: string
+              required:
+                - country
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: [{ "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }, ...]
+
+  /address/order:
+    post:
+      summary: Get the order of address components for a specific country.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+              required:
+                - country
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: ["street", "city", "state", ...]
+
+  /address:
+    post:
+      summary: Create a new address.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: { "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }
+
+  /addresses/{id}:
+    delete:
+      summary: Delete an address by ID.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the address to delete.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: { "_id": "12345", "firstName": "John", "lastName": "Doe", "street": "123 Main St", "city": "City1", "county": "County1", "prefecture": "Prefecture1", "province": "Province1", "state": "State1", "zip": "12345" }
+        '404':
+          description: No address found for the given ID
+          content:
+            application/json:
+              example: { "message": "Cannot find any address with id 12345" }
+
+# Define components
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        _id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        county:
+          type: string
+        prefecture:
+          type: string
+        province:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+
+
