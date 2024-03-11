@@ -1,5 +1,4 @@
-referenced from these two youtube lectures, 
-https://www.youtube.com/watch?v=9OfL9H6AmhQ
-https://www.youtube.com/watch?v=_7UQPve99r4
-package.json: simplified way to manage a proejct's metadata and dependencies. 
-
+# CPSC 5200 Team Project
+Team 5: Ajer Lodhi, Anthony Ngo, Suguna Naidu Karanam, Taekil Oh
+Mar 10th, 2024
+CSPC5200-02 24WQ
