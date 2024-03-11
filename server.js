@@ -94,7 +94,7 @@ app.get('/address/:id', async(req, res) => {
     }
 });
 
-app.post("/address", async (req, res) => {
+app.post("/search", async (req, res) => {
     try {
         const { firstName, lastName, street, city, county, state, zip, country } = req.body;
 
@@ -102,12 +102,14 @@ app.post("/address", async (req, res) => {
         // 'i' flag for case-insensitive search
         if (street) filter.street = new RegExp(street, 'i'); 
         if (city) filter.city = new RegExp(city, 'i');
-        if (zip) filter.zip = new RegExp(zip, 'i');
+        // if (zip) filter.zip = new RegExp(zip, 'i');
+        if (zip) filter.zip = f
         if (country) filter.country = new RegExp(country, 'i');
         if (firstName) filter.firstName = firstName
         if (lastName) filter.lastName = lastName
 
         // Find addresses matching filter criteria
+        console.log(filter)
         const addresses = await Address.find(filter);
 
         res.status(200).json(addresses);
@@ -129,7 +131,7 @@ app.post("/address/order", async (req, res) => {
 })
 
 // create a new address and save to database. 
-app.post('/address/new', async(req, res) => {
+app.post('/address', async(req, res) => {
     try{
         const address = await Address.create(req.body);
         res.status(200).json(address);

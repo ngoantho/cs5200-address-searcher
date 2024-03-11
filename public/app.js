@@ -38,7 +38,7 @@ async function parseForm() {
             return {...obj, [item.getAttribute("part")]: item.value}
         }, {})
         
-        let req = await fetch("http://localhost:3000/address", {
+        let req = await fetch("http://localhost:3000/search", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

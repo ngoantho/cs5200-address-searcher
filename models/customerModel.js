@@ -37,7 +37,7 @@ const customerSchema = mongoose.Schema(
         },
         
         zip: {
-            type: String,
+            type: mongoose.Schema.Types.Mixed,
             required: [true, "Please enter a zip code(postal code)"],
         },
         
