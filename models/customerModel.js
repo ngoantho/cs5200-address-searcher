@@ -15,29 +15,29 @@ const customerSchema = mongoose.Schema(
         street: {
             type: String,
             required: [true, "Please enter a street"],
-            default: " ",
+            // default: " ",
         },
         
         city: {
             type: String,
             required: [true, "Please enter a City"],
-            default: " ",
+            // default: " ",
         },
         
         county: {
             type: String,
             required: [true, "Please enter a county"],
-            default: " ",
+            // default: " ",
         },
         
         state: {
             type: String,
             required: [true, "Please enter a state"],
-            default: " ",
+            // default: " ",
         },
         
         zip: {
-            type: String,
+            type: mongoose.Schema.Types.Mixed,
             required: [true, "Please enter a zip code(postal code)"],
         },
         

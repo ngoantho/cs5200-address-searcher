@@ -10,12 +10,6 @@
     <hr />
     <h1>Address Search - Team 5</h1>
     <hr />
-    <!-- <form id="mode-form">
-        <input type="radio" value="multi-country" id="multi-country" name="mode" onchange="handleModeChange(this)">
-        <label for="multi-country">Multi-Country Search</label>
-        <input type="radio" value="single-country" id="single-country" name="mode" onchange="handleModeChange(this)">
-        <label for="single-country">Single Country Search</label>
-    </form> -->
     <form id="multi-country-form" class="country-form">
         <div class="first-line">
             <select id="selected-countries-select">
@@ -26,10 +20,12 @@
         <ul id="selected-countries-list"></ul>
         <hr>
         <div class="second-line">
-            <div>
-                <label for="street">Street</label>
-                <input type="text" id="street" name="street">
-            </div>
+            <fieldset id="fieldset_name">
+                <legend>Name</legend>
+            </fieldset>
+            <fieldset id="fieldset_street">
+                <legend>Street</legend>
+            </fieldset>
             <fieldset id="fieldset_city">
                 <legend>City</legend>
             </fieldset>
@@ -49,7 +45,7 @@
                 <legend>Postal Code</legend>
             </fieldset>
         </div>
-        <button type="submit" onclick="parseForm()">Submit</button>
+        <button type="submit" onclick="parseForm()">Search</button>
     </form>
     <div class="addresses" id="addresses"></div>
     <div class="pagination" id="pagination"></div>

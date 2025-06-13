@@ -13,8 +13,7 @@ async function setupCountriesList() {
 async function parseForm() {
     let form = document.getElementById("multi-country-form");
     let formData = new FormData(form);
-    let entries = Object.fromEntries(formData);
-    console.debug("form data", entries);
+    let {street} = Object.fromEntries(formData);
 
     let countries = []; // Extract from list elements and remove button
     let selectedCountryList = document.getElementById("selected-countries-list");
@@ -24,17 +23,32 @@ async function parseForm() {
 
     // Array to store all the promises returned by fetch requests
     let promises = countries.map(async (country) => {
-        let req = await fetch("http://localhost:3000/address", {
+        let nodes = Array
+                        .from(document.querySelectorAll("select[country]"))
+                        .filter((select) => select.getAttribute("country") == country)
+        let [street] = Array
+                        .from(document.querySelectorAll("input[type=text][part=street]"))
+                        .filter((input) => input.getAttribute("country") == country)
+                        .map((input) => input.value)
+        let [firstName, lastName] = Array
+                        .from(document.querySelectorAll("input[type=text][part=name]"))
+                        .filter((input) => input.getAttribute("country") == country)
+                        .map((input) => input.value)
+        let entries = nodes.reduce((obj, item) => {
+            return {...obj, [item.getAttribute("part")]: item.value}
+        }, {})
+        
+        let req = await fetch("http://localhost:3000/search", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ ...entries, country })
-        });
+            body: JSON.stringify({ ...entries, firstName, lastName, street, country })
+        })
 
-        return await req.json(); // Return the promise for each fetch request
-    });
+        return req.json() // Return the promise for each fetch request
+    })
 
     // Wait for all promises to resolve using Promise.all
     Promise.all(promises)
@@ -103,6 +117,9 @@ async function setupValidation(country) {
     })
     let data = await req.json()
 
+    createName(country)
+    createStreet(country)
+
     createInput(country, data, "city")
     createInput(country, data, "zip")
     if (order.includes("county")) {
@@ -121,8 +138,14 @@ async function setupValidation(country) {
 
 function handleChange(part, value, country) {
     if (part == "state") {
-        document.getElementById(`${country}_county`)
-        .querySelectorAll("option[state]").forEach((option) => {
+        if (document.getElementById(`${country}_county`)) {
+            document.getElementById(`${country}_county`).querySelectorAll("option[state]").forEach((option) => {
+                if (option.getAttribute("state") == value) option.hidden = false
+                else option.hidden = true
+            })
+        }
+        // list cities at state level
+        document.getElementById(`${country}_city`).querySelectorAll("option[state]").forEach((option) => {
             if (option.getAttribute("state") == value) option.hidden = false
             else option.hidden = true
         })
@@ -167,6 +190,48 @@ function handleChange(part, value, country) {
     // })
 }
 
+function createStreet(country) {
+    let div = document.createElement("div")
+    div.setAttribute("country", country)
+
+    let label = document.createElement("label")
+    label.textContent = country
+    div.appendChild(label)
+
+    let input = document.createElement("input")
+    input.type = "text"
+    input.setAttribute("part", "street")
+    input.setAttribute("country", country)
+    div.appendChild(input)
+
+    document.getElementById("fieldset_street", div).appendChild(div)
+}
+
+function createName(country) {
+    let div = document.createElement("div")
+    div.setAttribute("country", country)
+
+    let label = document.createElement("label")
+    label.textContent = country
+    div.appendChild(label)
+
+    let firstName = document.createElement("input")
+    firstName.type = "text"
+    firstName.placeholder = "First Name"
+    firstName.setAttribute("part", "name")
+    firstName.setAttribute("country", country)
+    div.appendChild(firstName)
+
+    let lastName = document.createElement("input")
+    lastName.type = "text"
+    lastName.placeholder = "Last Name"
+    lastName.setAttribute("part", "name")
+    lastName.setAttribute("country", country)
+    div.appendChild(lastName)
+
+    document.getElementById("fieldset_name", div).appendChild(div)
+}
+
 function createInput(country, data, part) {
     let div = document.createElement("div")
     div.setAttribute("country", country)
@@ -177,6 +242,8 @@ function createInput(country, data, part) {
 
     let select = document.createElement("select")
     select.id = `${country}_${part}`
+    select.setAttribute("country", country)
+    select.setAttribute("part", part)
     select.onchange = (e) => handleChange(part, e.target.value, country)
 
     let count = {}
@@ -213,7 +280,7 @@ function createInput(country, data, part) {
     let defaultOption = document.createElement("option")
     defaultOption.value = ""
     defaultOption.selected = true
-    defaultOption.hidden = true
+    defaultOption.hidden = false
     select.appendChild(defaultOption)
 
     div.appendChild(select)
@@ -240,9 +307,9 @@ function loadAddresses(data) {
         const endIndex = Math.min(startIndex + pageSize, data.length);
 
         for (let i = startIndex; i < endIndex; i++) {
-            const address = data[i];
+            const {_id, firstName, lastName, street, city, county, prefecture, province, state, zip} = data[i];
             const div = document.createElement('div');
-            div.textContent = `ID: ${address._id}, Address: ${address.street}, ${address.city}, ${address.state} ${address.zip}`;
+            div.textContent = `ID: ${_id}, Name: ${firstName} ${lastName}, Address: ${street}, ${city}, ${county??""} ${prefecture??""} ${province??""} ${state??""} ${zip}`;
             addressesContainer.appendChild(div);
         }
 
