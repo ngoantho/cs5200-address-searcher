@@ -1,6 +1,6 @@
 window.validation = {}
 async function setupCountriesList() {
-    let req = await fetch("http://localhost:3000/validation/countries")
+    let req = await fetch("/validation/countries")
     let countries = await req.json() // array
     for (country of countries) {
         let option = document.createElement("option")
@@ -13,7 +13,7 @@ async function setupCountriesList() {
 async function parseForm() {
     let form = document.getElementById("multi-country-form");
     let formData = new FormData(form);
-    let {street} = Object.fromEntries(formData);
+    let { street } = Object.fromEntries(formData);
 
     let countries = []; // Extract from list elements and remove button
     let selectedCountryList = document.getElementById("selected-countries-list");
@@ -24,21 +24,21 @@ async function parseForm() {
     // Array to store all the promises returned by fetch requests
     let promises = countries.map(async (country) => {
         let nodes = Array
-                        .from(document.querySelectorAll("select[country]"))
-                        .filter((select) => select.getAttribute("country") == country)
+            .from(document.querySelectorAll("select[country]"))
+            .filter((select) => select.getAttribute("country") == country)
         let [street] = Array
-                        .from(document.querySelectorAll("input[type=text][part=street]"))
-                        .filter((input) => input.getAttribute("country") == country)
-                        .map((input) => input.value)
+            .from(document.querySelectorAll("input[type=text][part=street]"))
+            .filter((input) => input.getAttribute("country") == country)
+            .map((input) => input.value)
         let [firstName, lastName] = Array
-                        .from(document.querySelectorAll("input[type=text][part=name]"))
-                        .filter((input) => input.getAttribute("country") == country)
-                        .map((input) => input.value)
+            .from(document.querySelectorAll("input[type=text][part=name]"))
+            .filter((input) => input.getAttribute("country") == country)
+            .map((input) => input.value)
         let entries = nodes.reduce((obj, item) => {
-            return {...obj, [item.getAttribute("part")]: item.value}
+            return { ...obj, [item.getAttribute("part")]: item.value }
         }, {})
-        
-        let req = await fetch("http://localhost:3000/search", {
+
+        let req = await fetch("/search", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -97,7 +97,7 @@ function addCountry() {
 async function setupValidation(country) {
     console.debug("setupValidation", country)
 
-    let req = await fetch("http://localhost:3000/address/order", {
+    let req = await fetch("/address/order", {
         method: "POST",
         headers: {
             "Accept": "application/json",
@@ -107,13 +107,13 @@ async function setupValidation(country) {
     })
     let order = await req.json() // array
 
-    req = await fetch("http://localhost:3000/validation/country", {
+    req = await fetch("/validation/country", {
         method: "POST",
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({country})
+        body: JSON.stringify({ country })
     })
     let data = await req.json()
 
@@ -152,10 +152,10 @@ function handleChange(part, value, country) {
         window.state = value
     } else if (part == "county") {
         document.getElementById(`${country}_city`)
-        .querySelectorAll(`option[county][state]`).forEach((option) => {
-            if (option.getAttribute("state") == window.state && option.getAttribute("county") == value) option.hidden = false
-            else option.hidden = true
-        })
+            .querySelectorAll(`option[county][state]`).forEach((option) => {
+                if (option.getAttribute("state") == window.state && option.getAttribute("county") == value) option.hidden = false
+                else option.hidden = true
+            })
         window.county = value
     } else if (part == "prefecture") {
         document.getElementById(`${country}_city`)
@@ -181,9 +181,9 @@ function handleChange(part, value, country) {
     }
     // document.getElementById(`${country}_zip`)
     // .querySelectorAll("option[value]").forEach((option) => {
-    //     if ((option.getAttribute("county") == window.county && 
-    //         option.getAttribute("state") == window.state) || 
-    //         option.getAttribute("prefecture") == window.prefecture || 
+    //     if ((option.getAttribute("county") == window.county &&
+    //         option.getAttribute("state") == window.state) ||
+    //         option.getAttribute("prefecture") == window.prefecture ||
     //         option.getAttribute("province") == window.province ||
     //         option.getAttribute("elevate_city") == "true") option.hidden = false
     //     else option.hidden = true
@@ -307,9 +307,9 @@ function loadAddresses(data) {
         const endIndex = Math.min(startIndex + pageSize, data.length);
 
         for (let i = startIndex; i < endIndex; i++) {
-            const {_id, firstName, lastName, street, city, county, prefecture, province, state, zip} = data[i];
+            const { _id, firstName, lastName, street, city, county, prefecture, province, state, zip } = data[i];
             const div = document.createElement('div');
-            div.textContent = `ID: ${_id}, Name: ${firstName} ${lastName}, Address: ${street}, ${city}, ${county??""} ${prefecture??""} ${province??""} ${state??""} ${zip}`;
+            div.textContent = `ID: ${_id}, Name: ${firstName} ${lastName}, Address: ${street}, ${city}, ${county ?? ""} ${prefecture ?? ""} ${province ?? ""} ${state ?? ""} ${zip}`;
             addressesContainer.appendChild(div);
         }
 
@@ -331,4 +331,3 @@ function loadAddresses(data) {
         }
     }
 }
-
