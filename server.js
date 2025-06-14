@@ -3,11 +3,12 @@ const app = express();
 const Address = require('./models/customerModel') // address model
 const Validation = require('./models/validationModel')
 const AddressOrder = require('./models/addressOrder')
-const mongoose =  require('mongoose');
+const mongoose = require('mongoose');
 const path = require("path")
 const { error } = require('console');
 const livereload = require("livereload")
 const connectLiveReload = require("connect-livereload")
+require('dotenv').config()
 
 let liveReloadServer = livereload.createServer()
 liveReloadServer.watch(path.join(__dirname, "public"))
@@ -34,13 +35,13 @@ app.get('/blog', (req, res) => {
 });
 
 // return all list of addresses
-app.get('/addresses', async(req, res) => {
+app.get('/addresses', async (req, res) => {
     try {
         // all addresses in the list
         const addresses = await Address.find({});
         res.status(200).json(addresses);
     } catch {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 });
 
@@ -50,13 +51,13 @@ app.get("/validation/countries", async (req, res) => {
         const countries = await AddressOrder.find().distinct("country")
         res.status(200).json(countries)
     } catch {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 })
 
 app.post("/validation/country", async (req, res) => {
     try {
-        let {country} = req.body
+        let { country } = req.body
         let data = await Validation.find({ country })
         res.status(200).json(data)
     } catch (error) {
@@ -72,25 +73,25 @@ app.get('/address/name/:name', async (req, res) => {
     try {
         const name = req.params.name;
         const customers = await finderByName(name);
-        if(customers.length === 0) {
-            return res.status(404).json({message: `No Address with the name ${name}`});
+        if (customers.length === 0) {
+            return res.status(404).json({ message: `No Address with the name ${name}` });
         }
         res.status(200).json(customers);
     } catch (error) {
-    res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 });
 
 // based on id find the address
 // we can update this to find target
-app.get('/address/:id', async(req, res) => {
+app.get('/address/:id', async (req, res) => {
     try {
         // find by id
-        const {id} = req.params;
+        const { id } = req.params;
         const address = await Address.findById(id);
         res.status(200).json(address);
     } catch {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 });
 
@@ -100,7 +101,7 @@ app.post("/search", async (req, res) => {
 
         const filter = {};
         // 'i' flag for case-insensitive search
-        if (street) filter.street = new RegExp(street, 'i'); 
+        if (street) filter.street = new RegExp(street, 'i');
         if (city) filter.city = new RegExp(city, 'i');
         // if (zip) filter.zip = new RegExp(zip, 'i');
         if (zip) filter.zip = f
@@ -121,70 +122,69 @@ app.post("/search", async (req, res) => {
 
 app.post("/address/order", async (req, res) => {
     try {
-        let {country} = req.body
-        let [data] = await AddressOrder.find({country})
-        let {_, order} = data
+        let { country } = req.body
+        let [data] = await AddressOrder.find({ country })
+        let { _, order } = data
         res.status(200).json(order)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
 })
 
-// create a new address and save to database. 
-app.post('/address', async(req, res) => {
-    try{
+// create a new address and save to database.
+app.post('/address', async (req, res) => {
+    try {
         const address = await Address.create(req.body);
         res.status(200).json(address);
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 });
 
 // update a address
-app.put('/address/:id', async(req, res) => {
-    try{
-        const {id} = req.params;
-        const address =await Address.findByIdAndUpdate(id, req.body);
+app.put('/address/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const address = await Address.findByIdAndUpdate(id, req.body);
         // not find any addresses in the database
-        if(!address){
-            return res.status(404).json({message: 'cannot find any address with id ${id}'});
+        if (!address) {
+            return res.status(404).json({ message: 'cannot find any address with id ${id}' });
         }
         const updatedAddress = await Address.findById(id);
         res.status(200).json(updatedAddress);
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 });
 
 // delete method
-app.delete('/addresses/:id', async(req, res)=> {
+app.delete('/addresses/:id', async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const address = await Address.findByIdAndDelete(id);
-        if(!product) {
-            return res.status(404).json({message: 'cannot find any product with ID ${id}'})
+        if (!product) {
+            return res.status(404).json({ message: 'cannot find any product with ID ${id}' })
         }
         res.status(200).json(address);
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 });
 
 // connecting module to mongoDB
 // (name:password) = (admin:cs5200Team5)
-mongoose.connect('mongodb+srv://admin:cs5200Team5@cs5200team5api.dnzdxjz.mongodb.net/cs5200Team5?retryWrites=true&w=majority&appName=cs5200Team5API')
-.then(()=> {
+mongoose.connect(process.env.MONGO)
+    .then(() => {
 
-    console.log('connected to MongoDB');
+        console.log('connected to MongoDB');
 
-    app.listen(3000, ()=> {
-        console.log('Node API app is running on port 3000');
-    });
+        app.listen(3000, () => {
+            console.log('Node API app is running on port 3000');
+        });
 
-}).catch((error)=> {
-    console.log(error);
-})
-
+    }).catch((error) => {
+        console.log(error);
+    })
